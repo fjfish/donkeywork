@@ -1,6 +1,6 @@
-require "donkey/version"
+require "donkeywork/version"
 
-module Donkey
+module Donkeywork
   class Error < StandardError; end
   # Your code goes here...
 end

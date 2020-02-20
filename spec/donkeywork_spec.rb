@@ -1,6 +1,6 @@
-RSpec.describe Donkey do
+RSpec.describe Donkeywork do
   it "has a version number" do
-    expect(Donkey::VERSION).not_to be nil
+    expect(Donkeywork::VERSION).not_to be nil
   end
 
   it "does something useful" do
