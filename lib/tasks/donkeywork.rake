@@ -6,7 +6,7 @@ namespace :donkey do
 
       Creates fabricators
       Creates ember models and specs
-      Creates serialzers and specs
+      Creates serializers and specs
       Creates ember models
       Creates CRUD Ember views
       Creates CRUD Ember
@@ -24,7 +24,7 @@ namespace :donkey do
   end
 
   desc "create fabricator"
-  task fabricator:  [:environment, :check, :init] do
+  task fabricator: [:environment, :check, :init] do
     file_name = check_file("spec/fabricators", subtype: "_fabricator")
     break unless file_name
     template_text = IO.read(File.dirname(__FILE__) + "/donkey/fabricator_template.rb.erb")
@@ -32,7 +32,7 @@ namespace :donkey do
   end
 
   desc "create serializer and specs"
-  task serializer_and_specs:  [:environment, :check, :init] do
+  task serializer_and_specs: [:environment, :check, :init] do
     serializer_file_name = check_file("app/serializers", subtype: "_serializer")
     if serializer_file_name
       template_text = IO.read(File.dirname(__FILE__) + "/donkey/fabricator_spec_template.rb.erb")
@@ -48,7 +48,7 @@ namespace :donkey do
   end
 
   desc "create authorizer and specs"
-  task authorizer_and_specs:  [:environment, :check, :init] do
+  task authorizer_and_specs: [:environment, :check, :init] do
     authorizer_file_name = check_file("app/authorizers", subtype: "_authorizer")
     if authorizer_file_name
 
@@ -86,7 +86,7 @@ namespace :donkey do
   end
 
   desc "create controller"
-  task controller:  [:environment, :check, :init] do
+  task controller: [:environment, :check, :init] do
     controller_file_name = check_file("app/controllers", subtype: "s_controller")
     if controller_file_name
       controller_template_text = IO.read(File.dirname(__FILE__) + "/donkey/controller_template.rb.erb")
@@ -95,7 +95,7 @@ namespace :donkey do
   end
 
   desc "create Ember model"
-  task ember_model:  [:environment, :check, :init] do
+  task ember_model: [:environment, :check, :init] do
     ember_model_file_name = check_file("app/assets/javascripts/ember/models", subtype: "", extension: "coffee")
     if ember_model_file_name
       ember_template_text = IO.read(File.dirname(__FILE__) + "/donkey/ember_model_template.coffee.erb")
@@ -111,9 +111,9 @@ namespace :donkey do
     @model.constantize
   end
 
-  def model_columns(indent_by, example: false, pre_colon: false, trailling: "\n", miss: [],  transform: -> (name) { name.itself }, ember_type: false)
+  def model_columns(indent_by, example: false, pre_colon: false, trailling: "\n", miss: [], transform: -> (name) { name.itself }, ember_type: false)
     indent = " " * indent_by
-    indent = indent + ":" if pre_colon
+    indent += ":" if pre_colon
     model_column_list.map do |column|
       next if column.name.in?(miss)
       if example && column.name == "practice_id"
@@ -121,7 +121,7 @@ namespace :donkey do
       else
         value = ""
         value = " " + type_example(column) if example
-        value = " " + ember_type(column) if ember_type
+        value = ember_type(column) if ember_type
         "#{indent}#{transform[column.name]}" + value
       end
     end.join("#{trailling}")
@@ -131,13 +131,9 @@ namespace :donkey do
     @model_base_name ||= @model.snakecase
   end
 
-  def model_ember_name
-
-  end
-
   def check_file(path, subtype:, extension: "rb")
     name = "#{path}/#{model_base_name}#{subtype}.#{extension}"
-    if File.exists?(name)
+    if File.exist?(name)
       continue = ask("File #{name} already exists - overwrite?")
       return false unless continue =~ %r{y}i
     end
@@ -172,26 +168,26 @@ namespace :donkey do
         "1"
       end
     when :string then
-      %Q("#{column.name.humanize}")
+      %("#{column.name.humanize}")
     when :date then
-      %Q("2020-02-29")
+      %("2020-02-29")
     when :datetime then
-      %Q("2020-02-29T00:00:00.000+00:00")
+      %("2020-02-29T00:00:00.000+00:00")
     else
-      %Q("#{column.name.humanize}")
+      %("#{column.name.humanize}")
     end
   end
 
   def ember_type(column)
     case column.type
     when :integer, :number then
-      %Q(Ds.attr("number"))
+      %(: Ds.attr("number"))
     when :decimal then
-      %Q(Ds.attr("money"))
+      %(: Ds.attr("money"))
     when :date, :datetime then
-      %Q(Ds.attr("date"))
+      %(: Ds.attr("date"))
     else
-      %Q(Ds.attr("string"))
+      %(: Ds.attr("string"))
     end
   end
 end
