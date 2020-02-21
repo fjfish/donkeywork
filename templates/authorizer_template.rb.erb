@@ -1,0 +1,18 @@
+class <%= model %>Authorizer < ApplicationAuthorizer
+
+  def self.readable_by?(user)
+    user.permission_level >= 1
+  end
+
+  def self.creatable_by?(user)
+    user.permission_level >= 1
+  end
+
+  def self.updatable_by?(user)
+    user.permission_level >= <%= update_delete_level %>
+  end
+
+  def self.deletable_by?(user)
+    user.permission_level >= <%= update_delete_level %>
+  end
+end

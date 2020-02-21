@@ -1,0 +1,62 @@
+class <%= model %>sController < ApplicationController
+  authorize_actions_for <%= model %>
+
+  def index
+    @results = <%= model %>.all
+
+    if params[:page]
+      @total = @results.count
+      @results = @results.page(params[:page]).per(per_page)
+      @page = @results.current_page
+    end
+
+    render json: @results, meta: { total: @total, current_page: @page }, root: "<%= model_base_name.gsub("_", "-") %>s"
+  end
+
+  def show
+    @<%= model_base_name %> = <%= model %>.find(params[:id])
+    render json: @<%= model_base_name %>, root: :<%= model_base_name %>
+  end
+
+  def create
+    <%= model_base_name %> = <%= model %>.create(tidy_params)
+    if <%= model_base_name %>.valid?
+      render_<%= model_base_name %>(<%= model_base_name %>)
+    else
+      render_json_errors(<%= model_base_name %>)
+    end
+  end
+
+  def update
+    <%= model_base_name %> = <%= model %>.update(tidy_params)
+    if <%= model_base_name %>.valid?
+      render_<%= model_base_name %>(result.<%= model_base_name %>)
+    else
+      render_json_errors(<%= model_base_name %>)
+    end
+  end
+
+  def destroy
+    find_<%= model_base_name %>
+    if @<%= model_base_name %>.destroy
+      head :no_content
+    else
+      render_json_errors(@<%= model_base_name %>)
+    end
+  end
+
+  private
+
+  def find_<%= model_base_name %>
+    @<%= model_base_name %> ||= <%= model %>.find(params[:id])
+  end
+
+  def render_<%= model_base_name %>(<%= model_base_name %>)
+    render json: <%= model_base_name %>, root: :<%= model_base_name %>
+  end
+
+  def per_page
+    [25, 50, 100].include?(params[:per_page]) ? params[:per_page] : 25
+  end
+
+end

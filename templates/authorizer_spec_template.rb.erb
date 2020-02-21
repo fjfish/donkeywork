@@ -1,0 +1,25 @@
+require "spec_helper"
+
+describe <%= model %>Authorizer do
+  let(:user) { class_double("user") }
+
+  describe "class" do
+
+<%=  user_level_spec_generator(model, 0, update_delete_level)  %>
+<%=  user_level_spec_generator(model, 1, update_delete_level)  %>
+<%=  user_level_spec_generator(model, 2, update_delete_level)  %>
+<%=  user_level_spec_generator(model, 3, update_delete_level)  %>
+<%=  user_level_spec_generator(model, 4, update_delete_level)  %>
+  end
+
+  describe "instance" do
+    let(:<%= model_base_name %>) { <%= model %>.new }
+
+<%=  user_level_spec_generator(model_base_name, 0, update_delete_level)  %>
+<%=  user_level_spec_generator(model_base_name, 1,  update_delete_level)  %>
+<%=  user_level_spec_generator(model_base_name, 2,  update_delete_level)  %>
+<%=  user_level_spec_generator(model_base_name, 3,  update_delete_level)  %>
+<%=  user_level_spec_generator(model_base_name, 4,  update_delete_level)  %>
+  end
+end
+

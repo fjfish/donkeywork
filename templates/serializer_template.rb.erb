@@ -1,0 +1,4 @@
+class <%= model %>Serializer < ActiveModel::Serializer
+  attributes :id,
+    <%= model_columns(13, pre_colon: true, trailling: ",\n") %>
+end

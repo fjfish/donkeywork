@@ -1,0 +1,12 @@
+require "spec_helper"
+
+describe <%= model %>Serializer do
+  let(:practice) { MultiTenant.current_tenant }
+  let(:<%= model_base_name %>) { Fabricate.build(:<%= model_base_name %>, <%= fabricate_expectations(:model) %>) }
+  let(:parsed_json) { JSON.parse(<%= model %>Serializer.new(<%= model_base_name %>).to_json) }
+
+  it { expect(parsed_json.fetch("id")).to eq(<%= model_base_name %>.id) }
+<%= fabricate_expectations(:test) %>
+  it { expect(parsed_json.keys.count).to eq(<%= model.columns.count %>) }
+end
+
