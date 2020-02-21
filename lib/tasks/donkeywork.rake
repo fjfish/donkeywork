@@ -111,7 +111,7 @@ namespace :donkey do
     @model.constantize
   end
 
-  def model_columns(indent_by, example: false, pre_colon: false, trailling: "\n", miss: [], transform: -> (name) { name.itself }, ember_type: false)
+  def model_columns(indent_by, example: false, pre_colon: false, join_with: "\n", miss: [], transform: -> (name) { name.itself }, ember_type: false)
     indent = " " * indent_by
     indent += ":" if pre_colon
     model_column_list.map do |column|
@@ -124,7 +124,7 @@ namespace :donkey do
         value = ember_type(column) if ember_type
         "#{indent}#{transform[column.name]}" + value
       end
-    end.join("#{trailling}")
+    end.compact.join("#{join_with}")
   end
 
   def model_base_name

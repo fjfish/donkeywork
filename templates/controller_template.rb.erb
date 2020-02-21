@@ -19,7 +19,7 @@ class <%= model %>sController < ApplicationController
   end
 
   def create
-    <%= model_base_name %> = <%= model %>.create(tidy_params)
+    <%= model_base_name %> = <%= model %>.create(<%= model_base_name %>_params)
     if <%= model_base_name %>.valid?
       render_<%= model_base_name %>(<%= model_base_name %>)
     else
@@ -28,7 +28,7 @@ class <%= model %>sController < ApplicationController
   end
 
   def update
-    <%= model_base_name %> = <%= model %>.update(tidy_params)
+    <%= model_base_name %> = <%= model %>.update(<%= model_base_name %>_params)
     if <%= model_base_name %>.valid?
       render_<%= model_base_name %>(result.<%= model_base_name %>)
     else
@@ -59,4 +59,7 @@ class <%= model %>sController < ApplicationController
     [25, 50, 100].include?(params[:per_page]) ? params[:per_page] : 25
   end
 
+  def <%= model_base_name %>_params
+    params.require(:<%= model_base_name %>).permit(<%= model_columns(0, miss: %w(created_at updated_at), join_with: ", ", pre_colon: true) %>)
+  end
 end
