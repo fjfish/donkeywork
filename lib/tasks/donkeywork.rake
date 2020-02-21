@@ -1,5 +1,4 @@
-
-namespace :donkeywork do
+namespace :donkey do
   desc "info"
   task :info do
     puts <<~EOT
@@ -8,6 +7,7 @@ namespace :donkeywork do
       Creates fabricators
       Creates ember models and specs
       Creates serialzers and specs
+      Creates ember models
       Creates CRUD Ember views
       Creates CRUD Ember
     EOT
@@ -94,6 +94,15 @@ namespace :donkeywork do
     end
   end
 
+  desc "create Ember model"
+  task ember_model:  [:environment, :check, :init] do
+    ember_model_file_name = check_file("app/assets/javascripts/ember/models", subtype: "", extension: "coffee")
+    if ember_model_file_name
+      ember_template_text = IO.read(File.dirname(__FILE__) + "/donkey/ember_model_template.coffee.erb")
+      IO.write(ember_model_file_name, ERB.new(ember_template_text).result(binding))
+    end
+  end
+
   def get_model
     @model = ask("Model name (camel pls)")
   end
@@ -102,7 +111,7 @@ namespace :donkeywork do
     @model.constantize
   end
 
-  def model_columns(indent_by, example: false, pre_colon: false, trailling: "\n", miss: [])
+  def model_columns(indent_by, example: false, pre_colon: false, trailling: "\n", miss: [],  transform: -> (name) { name.itself }, ember_type: false)
     indent = " " * indent_by
     indent = indent + ":" if pre_colon
     model_column_list.map do |column|
@@ -111,8 +120,9 @@ namespace :donkeywork do
         "#{indent}practice { MultiTenant.current_tenant }"
       else
         value = ""
-        value = " " + (column.type == :integer ? "0" : %Q("#{column.name.humanize}")) if example
-        "#{indent}#{column.name}" + value
+        value = " " + type_example(column) if example
+        value = " " + ember_type(column) if ember_type
+        "#{indent}#{transform[column.name]}" + value
       end
     end.join("#{trailling}")
   end
@@ -121,9 +131,13 @@ namespace :donkeywork do
     @model_base_name ||= @model.snakecase
   end
 
-  def check_file(path, subtype:)
-    name = "#{path}/#{model_base_name}#{subtype}.rb"
-    if File.exists?("#{path}/#{model_base_name}#{subtype}.rb")
+  def model_ember_name
+
+  end
+
+  def check_file(path, subtype:, extension: "rb")
+    name = "#{path}/#{model_base_name}#{subtype}.#{extension}"
+    if File.exists?(name)
       continue = ask("File #{name} already exists - overwrite?")
       return false unless continue =~ %r{y}i
     end
@@ -141,24 +155,43 @@ namespace :donkeywork do
                   "\n"
                 end
     model_column_list.map do |column|
-      example =
-        case column.type
-        when :integer
-          if column.name == "practice_id"
-            "practice.id"
-          else
-            "1"
-          end
-        when :string then '"string"'
-        when :date then '"2020-02-29"'
-        when :datetime then '"2020-02-29T00:00:00.000+00:00"'
-        else '"XXX"'
-        end
       if mode == :model
-        "#{column.name}: #{example}"
+        "#{column.name}: #{type_example(column)}"
       elsif mode == :test
-        "  it { expect(parsed_json.fetch(\"#{column.name}\")).to eq(#{example}) }"
+        "  it { expect(parsed_json.fetch(\"#{column.name}\")).to eq(#{type_example(column)}) }"
       end
     end.join(join_with)
+  end
+
+  def type_example(column)
+    case column.type
+    when :integer
+      if column.name == "practice_id"
+        "practice.id"
+      else
+        "1"
+      end
+    when :string then
+      %Q("#{column.name.humanize}")
+    when :date then
+      %Q("2020-02-29")
+    when :datetime then
+      %Q("2020-02-29T00:00:00.000+00:00")
+    else
+      %Q("#{column.name.humanize}")
+    end
+  end
+
+  def ember_type(column)
+    case column.type
+    when :integer, :number then
+      %Q(Ds.attr("number"))
+    when :decimal then
+      %Q(Ds.attr("money"))
+    when :date, :datetime then
+      %Q(Ds.attr("date"))
+    else
+      %Q(Ds.attr("string"))
+    end
   end
 end
