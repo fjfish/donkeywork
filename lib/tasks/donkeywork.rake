@@ -181,13 +181,13 @@ namespace :donkey do
   def ember_type(column)
     case column.type
     when :integer, :number then
-      %(: Ds.attr("number"))
+      %(: DS.attr("number"))
     when :decimal then
-      %(: Ds.attr("money"))
+      %(: DS.attr("money"))
     when :date, :datetime then
-      %(: Ds.attr("date"))
+      %(: DS.attr("date"))
     else
-      %(: Ds.attr("string"))
+      %(: DS.attr("string"))
     end
   end
 end
