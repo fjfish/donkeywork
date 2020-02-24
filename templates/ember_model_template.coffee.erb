@@ -1,2 +1,2 @@
-Dy.<%= model %> = DS.Model
+Dy.<%= model %> = DS.Model.extend
 <%= model_columns(2, transform: -> (name) { name.camelize(:lower) }, ember_type: true ) %>
