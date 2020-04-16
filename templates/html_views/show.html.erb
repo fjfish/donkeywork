@@ -1,0 +1,8 @@
+<% for column in model_column_list %>
+<p>
+  <strong><%= column.name.humanize %></strong>
+  <%%= @<%= model_base_name %>.<%= column.name%> %>
+</p>
+<% end %>
+<%%= link_to fa_icon('pencil'), edit_<%= model_base_name %>_path(@<%= model_base_name %>), title: 'Edit' %> |
+<%%= link_to fa_icon('arrow-left'), <%= model_base_name.pluralize %>_path, title: 'Back' %>

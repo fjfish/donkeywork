@@ -1,0 +1,31 @@
+<h1>Listing <%= model_base_name.humanize %>s</h1>
+
+<table  id="<%= model_base_name.pluralize %>">
+  <thead>
+  <tr class="striped--light-gray">
+    <% for column in model_column_list(miss: %w[created_at updated_at]) %>
+    <th class="w2"><%= column.name.humanize %></th>
+    <% end %>
+    <th class="w1"></th>
+    <th class="w1"></th>
+    <th class="w1"></th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <%% @<%= model_base_name %>s.each do |<%= model_base_name %>| %>
+    <tr class="striped--light-gray">
+      <% for column in model_column_list(miss: %w[created_at updated_at]) %>
+      <td class="pa2"><%%= <%= model_base_name %>.<%= name_if_id(column.name) %> %></td>
+      <% end %>
+      <td class="pa2"><%%= link_to fa_icon('eye'), <%= model_base_name %>_path(<%= model_base_name %>), title: 'Show' %></td>
+      <td class="pa2"><%%= link_to fa_icon('pencil'), edit_<%= model_base_name %>_path(<%= model_base_name %>), title: 'Edit' %></td>
+      <td class="pa2"><%%= link_to fa_icon('times-circle'), <%= model_base_name %>_path(<%= model_base_name %>), method: :delete, data: { confirm: 'Are you sure?' }, title: 'Delete' if current_user.admin? %></td>
+    </tr>
+  <%% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%%= link_to fa_icon('plus-circle'), new_<%= model_base_name %>_path, title: 'New <%= model_base_name.humanize %>' %>

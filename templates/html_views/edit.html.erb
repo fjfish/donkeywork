@@ -1,0 +1,6 @@
+<h1>Editing <%= model_base_name.humanize %></h1>
+
+<%%= render 'form' %>
+
+<%%= link_to fa_icon('eye'), @<%= model_base_name %>, title: 'Show' %> |
+<%%= link_to fa_icon('arrow-left'), <%= model_base_name.pluralize %>_path, title: 'Back' %>

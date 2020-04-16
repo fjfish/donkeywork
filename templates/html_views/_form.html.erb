@@ -1,0 +1,19 @@
+<%%= form_for(@<%= model_base_name %>) do |f| %>
+  <%% if @<%= model_base_name %>.errors.any? %>
+    <div id="error_explanation">
+      <h2><%%= pluralize(@<%= model_base_name %>.errors.count, "error") %> prohibited this <%= model_base_name %> from being saved:</h2>
+
+      <ul>
+      <%% @<%= model_base_name %>.errors.full_messages.each do |msg| %>
+        <li><%%= msg %></li>
+      <%% end %>
+      </ul>
+    </div>
+  <%% end %>
+
+<%= html_form_generator %>
+
+  <div class="actions">
+    <%%= f.submit %>
+  </div>
+<%% end %>

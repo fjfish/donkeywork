@@ -94,6 +94,26 @@ namespace :donkey do
     end
   end
 
+  desc "create HTML controller"
+  task html_controller: [:environment, :check, :init] do
+    controller_file_name = check_file("app/controllers", subtype: "s_controller")
+    if controller_file_name
+      controller_template_text = IO.read(File.dirname(__FILE__) + "/donkey/html_controller_template.rb.erb")
+      IO.write(controller_file_name, ERB.new(controller_template_text).result(binding))
+    end
+  end
+
+  desc "create HTML views"
+  task html_views: [:environment, :check, :init] do
+    %w[_form edit index new show].each do |base_file|
+      view_file_name = check_view_file(base_file)
+      if view_file_name
+        view_template_text = IO.read(File.dirname(__FILE__) + "/donkey/html_views/#{base_file}.html.erb")
+        IO.write(view_file_name, ERB.new(view_template_text).result(binding))
+      end
+    end
+  end
+
   desc "create Ember model"
   task ember_model: [:environment, :check, :init] do
     ember_model_file_name = check_file("app/assets/javascripts/ember/models", subtype: "", extension: "coffee")
@@ -105,6 +125,11 @@ namespace :donkey do
 
   def get_model
     @model = ask("Model name (camel pls)")
+  end
+
+  def ask(message)
+    puts message
+    STDIN.gets.chomp
   end
 
   def model
@@ -128,7 +153,7 @@ namespace :donkey do
   end
 
   def model_base_name
-    @model_base_name ||= @model.snakecase
+    @model_base_name ||= @model.underscore
   end
 
   def check_file(path, subtype:, extension: "rb")
@@ -137,11 +162,53 @@ namespace :donkey do
       continue = ask("File #{name} already exists - overwrite?")
       return false unless continue =~ %r{y}i
     end
+    puts "Generating #{name}"
     name
   end
 
-  def model_column_list
-    @model_column_list ||= model.columns.dup.delete_if { |x| x.name.in? %w[id sid] }.sort { |l, h| l.name <=> h.name }
+  def check_view_file(base_file_name)
+    FileUtils.mkdir_p("app/views/#{model_base_name.pluralize}")
+    name = "app/views/#{model_base_name.pluralize}/#{base_file_name}.erb"
+    if File.exist?(name)
+      continue = ask("File #{name} already exists - overwrite?")
+      return false unless continue =~ %r{y}i
+    end
+    puts "Generating #{name}"
+    name
+  end
+
+  def model_column_list(miss: [])
+    @model_column_list ||= model.columns.dup.delete_if { |x| x.name.in? miss + %w[id sid] }.sort { |l, h| l.name <=> h.name }
+  end
+
+  def html_form_generator
+    model_column_list(miss: %w[created_at updated_at]).map do |column|
+      <<-EOT
+  <div class="field mt3">
+    <%= f.label :#{column.name} %><br>
+    <%= #{generate_column(column)} %>
+  </div>
+      EOT
+    end.join("\n")
+  end
+
+  def generate_column(column)
+    column_name = column.name
+    if column.name.ends_with?("_id")
+      %<f.select :#{column_name}, [["Select if required", nil]] + #{column_name[0..-3].camelize}.all.map { |#{column_name.first(3)}| [#{column_name.first(3)}.name,#{column_name.first(3)}.id]}>
+    elsif column.type == 'boolean'
+      %<f.check_box :#{column_name}>
+    else
+      %<f.text_field :#{column_name}>
+    end
+  end
+
+  def name_if_id(column_name)
+    if column_name.ends_with?("_id")
+      %<#{column_name}.name>
+    else
+      column_name
+    end
   end
 
   def fabricate_expectations(mode)

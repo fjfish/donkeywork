@@ -1,0 +1,44 @@
+class <%= model %>sController < HomeController
+  before_action :set_<%= model_base_name %>, only: %i[show edit update destroy]
+  respond_to :html
+
+  def index
+    @<%= model_base_name %>s = <%= model %>.all
+  end
+
+  def show
+  end
+
+  def new
+    @<%= model_base_name %> = <%= model %>.new
+    @<%= model_base_name %>.organisation ||= @organisation
+  end
+
+  def edit;
+  end
+
+  def create
+    @<%= model_base_name %> = <%= model %>.create(<%= model_base_name %>_params)
+    respond_with @<%= model_base_name %>
+  end
+
+  def update
+    @<%= model_base_name %>.update(<%= model_base_name %>_params)
+    respond_with @<%= model_base_name %>
+  end
+
+  def destroy
+    @<%= model_base_name %>.destroy
+    respond_with @<%= model_base_name %>
+  end
+
+  private
+
+  def set_<%= model_base_name %>
+    @<%= model_base_name %> ||= <%= model %>.find(params[:id])
+  end
+
+  def <%= model_base_name %>_params
+    params.require(:<%= model_base_name %>).permit(<%= model_columns(0, miss: %w(created_at updated_at), join_with: ", ", pre_colon: true) %>)
+  end
+end
