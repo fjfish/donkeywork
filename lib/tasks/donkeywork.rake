@@ -155,7 +155,7 @@ namespace :donkey do
   end
 
   def model_base_name
-    @model_base_name ||= @model.underscore
+    @model_base_name ||= model_with_namespace.split("/").last
   end
 
   def model_namespace
@@ -167,7 +167,8 @@ namespace :donkey do
   end
 
   def check_file(path, subtype:, extension: "rb")
-    name = "#{path}/#{model_base_name}#{subtype}.#{extension}"
+    FileUtils.mkdir_p("#{path}/#{model_namespace}") if model_namespace.length > 0
+    name = "#{path}/#{model_with_namespace}#{subtype}.#{extension}"
     if File.exist?(name)
       continue = ask("File #{name} already exists - overwrite?")
       return false unless continue =~ %r{y}i
@@ -178,7 +179,7 @@ namespace :donkey do
 
   def check_view_file(base_file_name)
     FileUtils.mkdir_p("app/views/#{model_base_name.pluralize}")
-    name = "app/views/#{model_base_name.pluralize}/#{base_file_name}.erb"
+    name = "app/views/#{model_with_namespace.pluralize}/#{base_file_name}.erb"
     if File.exist?(name)
       continue = ask("File #{name} already exists - overwrite?")
       return false unless continue =~ %r{y}i
