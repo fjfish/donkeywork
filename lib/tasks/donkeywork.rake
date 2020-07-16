@@ -34,7 +34,7 @@ namespace :donkey do
   end
 
   desc "create serializer with specs"
-  task serializer_and_specs: [:environment, :check, :init] do
+  task serializer_with_specs: [:environment, :check, :init] do
     serializer_file_name = check_file("app/serializers", subtype: "_serializer")
     if serializer_file_name
       template_text = IO.read(File.dirname(__FILE__) + "/donkey/fabricator_spec_template.rb.erb")
@@ -50,7 +50,7 @@ namespace :donkey do
   end
 
   desc "create authorizer with specs"
-  task authorizer_and_specs: [:environment, :check, :init] do
+  task authorizer_with_specs: [:environment, :check, :init] do
     authorizer_file_name = check_file("app/authorizers", subtype: "_authorizer")
     if authorizer_file_name
 
