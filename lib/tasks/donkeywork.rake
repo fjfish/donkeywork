@@ -29,7 +29,7 @@ namespace :donkey do
   task fabricator: [:environment, :check, :init] do
     file_name = check_file("spec/fabricators", subtype: "_fabricator")
     break unless file_name
-    template_text = IO.read(File.dirname(__FILE__) + "/donkey/fabricator_template.rb.erb")
+    template_text = IO.read("#{template_dir}/fabricator_template.rb.erb")
     IO.write(file_name, ERB.new(template_text).result(binding))
   end
 
@@ -37,13 +37,13 @@ namespace :donkey do
   task serializer_with_specs: [:environment, :check, :init] do
     serializer_file_name = check_file("app/serializers", subtype: "_serializer")
     if serializer_file_name
-      template_text = IO.read(File.dirname(__FILE__) + "/donkey/fabricator_spec_template.rb.erb")
+      template_text = IO.read("#{template_dir}/serializer_template.rb.erb")
       IO.write(serializer_file_name, ERB.new(template_text).result(binding))
     end
 
     serializer_spec_file_name = check_file("spec/serializers", subtype: "_serializer_spec")
     if serializer_spec_file_name
-      template_text = IO.read(File.dirname(__FILE__) + "/donkey/serializer_spec_template.rb.erb")
+      template_text = IO.read("#{template_dir}/serializer_spec_template.rb.erb")
       IO.write(serializer_spec_file_name, ERB.new(template_text).result(binding))
     end
 
@@ -55,7 +55,7 @@ namespace :donkey do
     if authorizer_file_name
 
       update_delete_level = ask("What level should be allowed to update and delete #{model}?").to_i
-      template_text = IO.read(File.dirname(__FILE__) + "/donkey/authorizer_template.rb.erb")
+      template_text = IO.read("#{template_dir}/authorizer_template.rb.erb")
       IO.write(authorizer_file_name, ERB.new(template_text).result(binding))
     end
 
@@ -82,7 +82,7 @@ namespace :donkey do
     end
         EOT
       end
-      template_text = IO.read(File.dirname(__FILE__) + "/donkey/authorizer_spec_template.rb.erb")
+      template_text = IO.read("#{template_dir}/authorizer_spec_template.rb.erb")
       IO.write(authorizer_spec_file_name, ERB.new(template_text).result(binding))
     end
   end
@@ -91,7 +91,7 @@ namespace :donkey do
   task controller: [:environment, :check, :init] do
     controller_file_name = check_file("app/controllers", subtype: "s_controller")
     if controller_file_name
-      controller_template_text = IO.read(File.dirname(__FILE__) + "/donkey/controller_template.rb.erb")
+      controller_template_text = IO.read("#{template_dir}/controller_template.rb.erb")
       IO.write(controller_file_name, ERB.new(controller_template_text).result(binding))
     end
   end
@@ -100,7 +100,7 @@ namespace :donkey do
   task html_controller: [:environment, :check, :init] do
     controller_file_name = check_file("app/controllers", subtype: "s_controller")
     if controller_file_name
-      controller_template_text = IO.read(File.dirname(__FILE__) + "/donkey/html_controller_template.rb.erb")
+      controller_template_text = IO.read("#{template_dir}/html_controller_template.rb.erb")
       IO.write(controller_file_name, ERB.new(controller_template_text).result(binding))
     end
   end
@@ -110,7 +110,7 @@ namespace :donkey do
     %w[_form edit index new show].each do |base_file|
       view_file_name = check_view_file(base_file)
       if view_file_name
-        view_template_text = IO.read(File.dirname(__FILE__) + "/donkey/html_views/#{base_file}.html.erb")
+        view_template_text = IO.read("#{template_dir}/html_views/#{base_file}.html.erb")
         IO.write(view_file_name, ERB.new(view_template_text).result(binding))
       end
     end
@@ -120,7 +120,7 @@ namespace :donkey do
   task ember_model: [:environment, :check, :init] do
     ember_model_file_name = check_file("app/assets/javascripts/ember/models", subtype: "", extension: "coffee")
     if ember_model_file_name
-      ember_template_text = IO.read(File.dirname(__FILE__) + "/donkey/ember_model_template.coffee.erb")
+      ember_template_text = IO.read("#{template_dir}/ember_model_template.coffee.erb")
       IO.write(ember_model_file_name, ERB.new(ember_template_text).result(binding))
     end
   end
@@ -156,6 +156,14 @@ namespace :donkey do
 
   def model_base_name
     @model_base_name ||= @model.underscore
+  end
+
+  def model_namespace
+    @model_namespace = model_with_namespace.gsub(%r{[^/]*$}, "")
+  end
+
+  def model_with_namespace
+    @model_with_namespace ||= @model.underscore
   end
 
   def check_file(path, subtype:, extension: "rb")
@@ -258,5 +266,13 @@ namespace :donkey do
     else
       %(: DS.attr("string"))
     end
+  end
+
+  def gem_root
+    @gem_root ||= Gem::Specification.find_by_name("donkeywork").gem_dir
+  end
+
+  def template_dir
+    @template_dir ||= "#{gem_root}/templates"
   end
 end
