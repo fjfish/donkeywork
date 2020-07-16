@@ -5,11 +5,13 @@ namespace :donkey do
       Do the donkey work:
 
       Creates fabricators
-      Creates ember models and specs
-      Creates serializers and specs
+      Creates ember models with specs
+      Creates serializers with specs
       Creates ember models
       Creates CRUD Ember views
       Creates CRUD Ember
+      Creates HTML controllers
+      Creates HTML views
     EOT
   end
 
@@ -31,7 +33,7 @@ namespace :donkey do
     IO.write(file_name, ERB.new(template_text).result(binding))
   end
 
-  desc "create serializer and specs"
+  desc "create serializer with specs"
   task serializer_and_specs: [:environment, :check, :init] do
     serializer_file_name = check_file("app/serializers", subtype: "_serializer")
     if serializer_file_name
@@ -47,7 +49,7 @@ namespace :donkey do
 
   end
 
-  desc "create authorizer and specs"
+  desc "create authorizer with specs"
   task authorizer_and_specs: [:environment, :check, :init] do
     authorizer_file_name = check_file("app/authorizers", subtype: "_authorizer")
     if authorizer_file_name
