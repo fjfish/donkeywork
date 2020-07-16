@@ -59,7 +59,7 @@ namespace :donkey do
       IO.write(authorizer_file_name, ERB.new(template_text).result(binding))
     end
 
-    authorizer_spec_file_name = check_file("spec/authorizors", subtype: "_authorizer_spec")
+    authorizer_spec_file_name = check_file("spec/authorizers", subtype: "_authorizer_spec")
     if authorizer_spec_file_name
       def user_level_spec_generator(subject_name, level, operation_level)
         if level == 0
