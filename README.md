@@ -31,7 +31,36 @@ Then try
 
 ## Usage
 
-TODO: Write usage instructions here
+You create your model, and then have to create all the other rubbish that goes with it. This is tedious donkey work. The original project this came from was an Ember one, the Rails side of which uses authorizers, serializers and controllers etc. etc. to talk JSON to the Ember app. When building a new module with half a dozen new tables I decided it would be quicker to use templates to do all of the boring bits.
+
+We also use rspec, and in general have specs for the authorizers and serializers (but not controllers for historical reasons I don't want to go into here), so the templates build those for you.
+
+In another side project I use plain old HTML (because it's internal and doesn't need to be over done). So I also added templates to do HTML controllers and views with a default form as well.
+
+This gives you a series of rake tasks that you give the camel cased model name to:
+
+        rake donkey:authorizer_with_specs       # create authorizer with specs
+        rake donkey:check                       # check environment
+        rake donkey:controller                  # create controller
+        rake donkey:ember_model                 # create Ember model
+        rake donkey:fabricator                  # create fabricator
+        rake donkey:html_controller             # create HTML controller
+        rake donkey:html_views                  # create HTML views
+        rake donkey:info                        # info
+        rake donkey:init                        # initialise
+        rake donkey:serializer_with_specs       # create serializer with specs
+
+Note that the Ember is a little non-generic and you might want to change it. We also use Fabricate, not FactoryBot, so I generate fabricators.
+
+As it stands it's rough around the edges but will give you something that works after you've created the model and just want to get to the interesting bits, whether you're going down the customised Ember route or HTML.
+
+I have plans to allow you to make your own copies of the templates and put them in your Rails project and so on, but not the energy to do it today.
+
+It supports namespaced tables, except with the fabricators, which will require a little work after generation. For example:
+
+    Fabricator(:rota_practitioner_diary, from: "Rota::PractitionerDiary")
+    
+I can't remember how FactoryBot handles this, so some editing may be required. Also might need to edit the specs, but at least you didn't have to write them yourself. :)
 
 ## Development
 
