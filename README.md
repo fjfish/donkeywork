@@ -20,6 +20,15 @@ Or install it yourself as:
 
     $ gem install donkeywork
 
+Add this to your Rakefile:
+
+    spec = Gem::Specification.find_by_name 'donkeywork'
+    load "#{spec.gem_dir}/lib/tasks/donkeywork.rake"
+
+Then try
+
+    rake donkey:info
+
 ## Usage
 
 TODO: Write usage instructions here
@@ -32,7 +41,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/donkeywork. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+Bug reports and pull requests are welcome on GitHub at https://github.com/fjfish/donkeywork. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
 ## License
 
