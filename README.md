@@ -1,6 +1,6 @@
 # Donkeywork
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/donkeywork`. To experiment with that code, run `bin/console` for an interactive prompt.
+You create your model, and then have to create all the other rubbish that goes with it. This is tedious donkey work. The original project this came from was an Ember one, the Rails side of which uses authorizers, serializers and controllers etc. etc. to talk JSON to the Ember app. When building a new module with half a dozen new tables I decided it would be quicker to use templates to do all of the boring bits. This gem was born to do this for me.
 
 ## Installation
 
@@ -28,8 +28,6 @@ Then try
     rake donkey:info
 
 ## Usage
-
-You create your model, and then have to create all the other rubbish that goes with it. This is tedious donkey work. The original project this came from was an Ember one, the Rails side of which uses authorizers, serializers and controllers etc. etc. to talk JSON to the Ember app. When building a new module with half a dozen new tables I decided it would be quicker to use templates to do all of the boring bits.
 
 We also use rspec, and in general have specs for the authorizers and serializers (but not controllers for historical reasons I don't want to go into here), so the templates build those for you.
 
